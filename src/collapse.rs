@@ -19,7 +19,7 @@ impl Folder {
     }
 
     fn collapse_query<W>(&mut self, query: &ProfileQuery, key: &str, writer: &mut W) -> std::io::Result<()> where W: Write {
-        self.stack.push_back(safe_segment(&format!("{}.{}", &query.ty, key)));
+        self.stack.push_back(safe_segment(&format!("{}({}).{}", query.ty, query.description, key)));
         self.write_line(query.breakdown[key], writer)?;
         for child in &query.children {
             self.collapse_query(child, key, writer)?;
@@ -69,7 +69,7 @@ impl Collapse for Folder {
                 self.stack.push_back(safe_segment("search"));
                 self.write_line(search.rewrite_time, &mut writer)?;
                 for query in &search.query {
-                    self.stack.push_back(safe_segment(&query.ty));
+                    self.stack.push_back(safe_segment(&format!("{}({})", query.ty, query.description)));
                     self.write_line(query.time_in_nanos, &mut writer)?;
                     for key in query.breakdown.keys().cloned().collect::<Vec<_>>() {
                         self.collapse_query(query, &key, &mut writer)?;

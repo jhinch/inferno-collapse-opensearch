@@ -28,6 +28,7 @@ pub struct ProfileQuery {
     pub description: String,
     pub time_in_nanos: usize,
     pub breakdown: HashMap<String, usize>,
+    #[serde(default)]
     pub children: Vec<ProfileQuery>,
 }
 
